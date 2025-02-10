@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Have Some Fun!</title>
+  <style>
+    /* Base styles for the mini game landing page */
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: linear-gradient(135deg, #a18cd1, #fbc2eb);
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      position: relative;
+    }
+    /* The game container covers the full viewport */
+    #game-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    /* Hearts that appear in the background */
+    .heart {
+      position: absolute;
+      cursor: pointer;
+      user-select: none;
+      animation: float 3s ease-out forwards;
+    }
+    @keyframes float {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(-50px); opacity: 0.7; }
+    }
+    /* Score display */
+    #score {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      font-size: 2rem;
+      color: white;
+      z-index: 10;
+    }
+    /* Win message (hidden until target reached) */
+    #message {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 3rem;
+      color: white;
+      z-index: 10;
+      text-align: center;
+      display: none;
+    }
+    /* Instructions box – always visible at the bottom */
+    #instructions {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.8);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 1.2rem;
+      color: #333;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <!-- Game container where hearts will appear -->
+  <div id="game-container"></div>
+  <!-- Score display -->
+  <div id="score">Score: 0</div>
+  <!-- Win message -->
+  <div id="message">You win!<br>Redirecting...</div>
+  <!-- Instructions box -->
+  <div id="instructions">Click on the hearts! Score 10 points for a surprise.</div>
+  <script>
+    let score = 0;
+    const targetScore = 3;
+    const gameContainer = document.getElementById("game-container");
+    const scoreDisplay = document.getElementById("score");
+    const messageDisplay = document.getElementById("message");
+
+    // Function to spawn a heart at a random position
+    function spawnHeart() {
+      const heart = document.createElement("div");
+      heart.classList.add("heart");
+      heart.innerHTML = "💖";
+      // Randomize heart size between 20px and 40px
+      const size = Math.floor(Math.random() * 20) + 20;
+      heart.style.fontSize = size + "px";
+      // Random position within viewport
+      heart.style.left = Math.random() * (window.innerWidth - size) + "px";
+      heart.style.top = Math.random() * (window.innerHeight - size) + "px";
+      heart.addEventListener("click", function() {
+        score++;
+        scoreDisplay.textContent = "Score: " + score;
+        heart.remove();
+        if (score >= targetScore) {
+          messageDisplay.style.display = "block";
+          setTimeout(() => {
+            window.location.href = "question.html";
+          }, 2000);
+        }
+      });
+      gameContainer.appendChild(heart);
+      // Remove heart after 3 seconds if not clicked
+      setTimeout(() => {
+        if (heart.parentNode) {
+          heart.remove();
+        }
+      }, 3000);
+    }
+
+    // Spawn hearts more frequently (e.g., every 300ms)
+    setInterval(spawnHeart, 300);
+  </script>
+</body>
+</html>

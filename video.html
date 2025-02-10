@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Special Video for You 💖</title>
+  <style>
+    /* General Styles for the Video Page */
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      background-size: 400% 400%;
+      animation: gradientAnimation 15s ease infinite;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .container {
+      position: relative;
+      text-align: center;
+      background: rgba(255,255,255,0.9);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      max-width: 400px;
+      width: 90%;
+      margin: 20px;
+      z-index: 2;
+    }
+    
+    video {
+      width: 100%;
+      max-width: 250px;
+      height: auto;
+      border-radius: 10px;
+      object-fit: contain;
+    }
+    
+    /* Overlay for user interaction */
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.5em;
+      z-index: 3;
+      cursor: pointer;
+    }
+    
+    .cute-message {
+      margin-top: 15px;
+      font-size: 1em;
+      color: #e75480;
+      line-height: 1.5;
+    }
+    
+    /* Reaction Emoji Base Styles */
+    .reaction-emoji {
+      position: fixed;
+      opacity: 1;
+      z-index: 1;
+    }
+    
+    /* Infinite Floating Animations */
+    @keyframes floatUpInf {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(-120vh) rotate(360deg); }
+    }
+    
+    @keyframes floatDownInf {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(120vh) rotate(360deg); }
+    }
+    
+    @keyframes floatRightInf {
+      0% { transform: translateX(0) rotate(0deg); }
+      100% { transform: translateX(120vw) rotate(360deg); }
+    }
+    
+    @keyframes floatLeftInf {
+      0% { transform: translateX(0) rotate(0deg); }
+      100% { transform: translateX(-120vw) rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Video set with autoplay, loop and no muted attribute -->
+    <video id="myVideo" controls autoplay loop playsinline>
+      <source src="video.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <div class="cute-message">
+      I'm so glad you're here! 💖<br>
+      Can't wait to see you soon.
+    </div>
+    <!-- Clickable overlay -->
+    <div id="playOverlay" class="overlay">Click me </div>
+  </div>
+  
+  <script>
+    window.addEventListener('load', function() {
+      const video = document.getElementById('myVideo');
+      const overlay = document.getElementById('playOverlay');
+      
+      // Pause video until the user clicks the overlay
+      video.pause();
+      
+      // When overlay is clicked, remove it, unmute, and start the video
+      overlay.addEventListener('click', function() {
+        overlay.style.display = 'none';
+        video.muted = false; // Ensure the video is unmuted
+        video.play().catch((error) => {
+          console.log('Video play error:', error);
+        });
+      });
+      
+      // Create reaction emojis that continuously float from all four sides
+      function createReactionEmojis() {
+        const emojiList = ["😍", "🥰", "😘", "💖", "😊", "💕", "😆", "🤩"];
+        const emojiCount = 120;
+        for (let i = 0; i < emojiCount; i++) {
+          const emoji = document.createElement('div');
+          emoji.classList.add('reaction-emoji');
+          // Pick a random emoji from the list
+          const randomEmoji = emojiList[Math.floor(Math.random() * emojiList.length)];
+          emoji.innerHTML = randomEmoji;
+          // Randomly decide the spawn edge: 0 = bottom, 1 = left, 2 = right, 3 = top
+          const spawnEdge = Math.floor(Math.random() * 4);
+          if (spawnEdge === 0) { // From bottom, float upward
+            emoji.style.left = Math.random() * 100 + 'vw';
+            emoji.style.bottom = '-50px';
+            emoji.style.top = 'auto';
+            emoji.style.right = 'auto';
+            emoji.style.animationName = 'floatUpInf';
+          } else if (spawnEdge === 1) { // From left, float rightward
+            emoji.style.left = '-50px';
+            emoji.style.top = Math.random() * 100 + 'vh';
+            emoji.style.animationName = 'floatRightInf';
+          } else if (spawnEdge === 2) { // From right, float leftward
+            emoji.style.right = '-50px';
+            emoji.style.top = Math.random() * 100 + 'vh';
+            emoji.style.animationName = 'floatLeftInf';
+          } else if (spawnEdge === 3) { // From top, float downward
+            emoji.style.left = Math.random() * 100 + 'vw';
+            emoji.style.top = '-50px';
+            emoji.style.bottom = 'auto';
+            emoji.style.right = 'auto';
+            emoji.style.animationName = 'floatDownInf';
+          }
+          emoji.style.fontSize = (12 + Math.random() * 12) + 'px';
+          emoji.style.animationDuration = (3 + Math.random() * 3) + 's';
+          emoji.style.animationDelay = Math.random() * 2 + 's';
+          emoji.style.animationIterationCount = 'infinite';
+          emoji.style.animationTimingFunction = 'linear';
+          document.body.appendChild(emoji);
+        }
+      }
+      
+      createReactionEmojis();
+    });
+  </script>
+</body>
+</html>
